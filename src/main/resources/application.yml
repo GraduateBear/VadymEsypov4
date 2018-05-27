@@ -8,11 +8,11 @@ spring:
       ddl-auto: create-drop
   mvc:
     view:
-      prefix: /
+      prefix: /WEB-INF/view
       suffix: .jsp
 
 server:
-  port: 8080
+  port: 9090
 
 
 
