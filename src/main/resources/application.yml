@@ -1,14 +1,14 @@
 spring:
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/test
-    username: sa
-    password:
+#  datasource:
+#    url: jdbc:h2:tcp://localhost/~/test
+#    username: sa
+#    password:
   jpa:
     hibernate:
       ddl-auto: create-drop
   mvc:
     view:
-      prefix: /WEB-INF/view
+      prefix: /WEB-INF/jsp/
       suffix: .jsp
 
 server:
