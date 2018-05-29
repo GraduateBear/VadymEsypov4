@@ -39,16 +39,14 @@
 
         <td class="content center">
             <form class="login_form" action="/departments/remove" method="post">
-                <input type="number" value="${remove_ID}" min="1" max="${departmentList.get(departmentList.size() - 1).getId()}"
-                       required name="id" placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>"/></p>
+                <input type="number" value="${remove_ID}" min="1" required name="id" placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>"/></p>
                 <input type="submit" value="<fmt:message key="index.jsp.submit.remove"/>"/>
             </form>
         </td>
 
         <td class="content center">
             <form class="login_form" action="/employees/filteredList" method="post">
-                <input type="number" name="id" value="${ID}" min="1" max="${departmentList.get(departmentList.size() - 1).getId()}"
-                       required placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>"/></p>
+                <input type="number" name="id" value="${ID}" min="1" required placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>"/></p>
                 <input type="submit" value="<fmt:message key="index.jsp.submit.list_of_employees"/>"/>
             </form>
         </td>

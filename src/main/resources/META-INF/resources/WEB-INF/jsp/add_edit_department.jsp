@@ -21,7 +21,7 @@
 
         <td class="content center">
             <form class="login_form" action="/departments/editDepartment" method="post">
-                <input type="number" value="${edit_ID}" required min="1" max="${departmentList.get(departmentList.size() - 1).getId()}"
+                <input type="number" value="${edit_ID}" required min="1"
                        name="id" placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>" /></p>
                 <%--<input type="number" value="${new_edit_ID}" min="1" name="newId"
                        placeholder="<fmt:message key="index.jsp.placeholder.newId"/>" /></p>--%>

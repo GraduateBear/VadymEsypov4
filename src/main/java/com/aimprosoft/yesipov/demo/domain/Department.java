@@ -15,11 +15,14 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@OnDelete(action = OnDeleteAction.CASCADE)
 public class Department {
-    
+
     @Id
     @GeneratedValue
     @Column(name = "department_id")
+    //@Cascade(value = CascadeType.ALL)
+    //@OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private long id;
     private String originalName;
 }
