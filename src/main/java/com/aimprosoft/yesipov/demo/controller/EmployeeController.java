@@ -102,29 +102,40 @@ public class EmployeeController {
         return returnAddEditEmployeePage(modelAndView);
     }
 
-    /*@PostMapping("/editEmployee")
+    @PostMapping("/editEmployee")
     public ModelAndView editEmployee(ModelAndView modelAndView,
-                                       @RequestParam(name = "id") long id,
-                                       //                               @RequestParam(name = "newId") String newID,
-                                       @RequestParam(name = "departmentName") String name) {
+                                     @RequestParam(name = "id") Long id,
+                                     @RequestParam(name = "firstName") String firstName,
+                                     @RequestParam(name = "lastName") String lastName,
+                                     @RequestParam(name = "birthday") @DateTimeFormat(pattern = "yyyy-MM-dd") Date birthday,
+                                     @RequestParam(name = "email") String email,
+                                     @RequestParam(name = "position") String position,
+                                     @RequestParam(name = "departmentId") Long departmentId,
+                                     @RequestParam(name = "salary") Double salary) {
         //long newId = newID.equals("") ? -1 : Long.valueOf(newID);
 
-        Optional<Department> optionalById = departmentService.findById(id);
+        Optional<Employee> optionalById = employeeService.findById(id);
         //Optional<Department> optionalByNewId = departmentService.findById(newId);
-        Optional<Department> optionalByName = departmentService.findByName(name);
+        Optional<Employee> optionalByEmail = employeeService.findByEmail(email);
 
-        System.out.println(optionalById.isPresent());
         if(optionalById.isPresent() //|| !optionalByNewId.isPresent() ||
-                && !optionalByName.isPresent()) {
-            Department department = optionalById.get();
-            department.setOriginalName(name);
+                && !optionalByEmail.isPresent()) {
+            Employee employee = optionalById.get();
+
+            employee.setFirstName(firstName.equals("") ? employee.getFirstName() : firstName);
+            employee.setLastName(lastName.equals("") ? employee.getLastName() : lastName);
+            employee.setBirthday(birthday.equals("") ? employee.getBirthday() : birthday);//nullpointer
+            employee.setEmail(email);
+            employee.setJob(position.equals("") ? employee.getJob() : position);
+            employee.setSalary(salary);//nullpointer
+            //employee.setDepartment(departmentId.equals("") ? optionalById.get().getFirstName() : firstName);
             //department.setId(newId == -1 ? id : newId);
             //department.setOriginalName(name.equals("") ? department.getOriginalName() : name);
-            departmentService.edit(department, id);
+            employeeService.edit(employee);
         } else {
             modelAndView.addObject("errorMessage",
                     "A department with such name or id already exists");
         }
-        return returnAddEditDepartmentPage(modelAndView);
-    }*/
+        return returnAddEditEmployeePage(modelAndView);
+    }
 }

@@ -13,7 +13,11 @@ public interface EmployeeService {
 
     Optional<Employee> findByEmail(String email);
 
+    Optional<Employee> findById(long id);
+
     void remove(long id);
 
     void add(Employee employee);
+
+    void edit(Employee employee);
 }
