@@ -1,8 +1,9 @@
 spring:
-#  datasource:
-#    url: jdbc:h2:tcp://localhost/~/test
-#    username: sa
-#    password:
+  datasource:
+    url: jdbc:mysql://localhost:3306/example  
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -13,6 +14,10 @@ spring:
 
 server:
   port: 9090
+  servlet:
+    context-parameters:
+      javax.servlet.jsp.jstl.fmt.localizationContext: resources
+      javax.servlet.jsp.jstl.fmt.locale: ru
 
 
 

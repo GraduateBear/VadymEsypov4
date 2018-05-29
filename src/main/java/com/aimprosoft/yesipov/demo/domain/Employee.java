@@ -1,5 +1,7 @@
 package com.aimprosoft.yesipov.demo.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +11,8 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Employee {
     @Id
     @GeneratedValue
@@ -26,6 +30,5 @@ public class Employee {
     @JoinColumn(referencedColumnName = "department_id")
     private Department department;
 
-    private Date birthDate;
-
+    private Date birthday;
 }

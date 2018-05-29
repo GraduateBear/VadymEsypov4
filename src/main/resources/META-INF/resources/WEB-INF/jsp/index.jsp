@@ -1,12 +1,30 @@
-<!DOCTYPE html>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"%>
+<%@ include file="../jspf/directive/page.jspf" %>
+<%@ include file="../jspf/directive/taglib.jspf" %>
+
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Insert title here</title>
-</head>
+
+<c:set var="title" value="Login" />
+<%@ include file="../jspf/head.jspf" %>
+
 <body>
-Print Receiptasdasd
+
+<table id="main-container">
+    <tr>
+        <td class="content center">
+
+            <form class="login_form" method="get" action="/departments">
+                <input type="submit" value="<fmt:message key="index.jsp.placeholder.departments"/>"/>
+            </form>
+
+            <form class="login_form" method="get" action="/employees/findAll">
+                <input type="submit" value="<fmt:message key="index.jsp.placeholder.employees"/>">
+            </form>
+
+        </td>
+    </tr>
+
+</table>
+
 </body>
+
 </html>
