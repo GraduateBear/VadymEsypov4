@@ -68,7 +68,7 @@ public class EmployeeController {
             employeeService.remove(employee.get().getId());
         } else {
             modelAndView.addObject("errorMessage",
-                    "A department with such id doesn't exist");
+                    "An employee with such email doesn't exist");
         }
 
         return getFilteredList(modelAndView, id);
@@ -112,29 +112,29 @@ public class EmployeeController {
                                      @RequestParam(name = "position") String position,
                                      @RequestParam(name = "departmentId") Long departmentId,
                                      @RequestParam(name = "salary") Double salary) {
-        //long newId = newID.equals("") ? -1 : Long.valueOf(newID);
-
         Optional<Employee> optionalById = employeeService.findById(id);
-        //Optional<Department> optionalByNewId = departmentService.findById(newId);
         Optional<Employee> optionalByEmail = employeeService.findByEmail(email);
+        System.out.println(departmentId);
+        Optional<Department> optionalByDepartmentId =
+                departmentService.findById(departmentId == null ? 0 : departmentId);
+        System.out.println(optionalByDepartmentId);
+        System.out.println(optionalByDepartmentId.isPresent());
 
-        if(optionalById.isPresent() //|| !optionalByNewId.isPresent() ||
-                && !optionalByEmail.isPresent()) {
+        if(optionalById.isPresent() && !optionalByEmail.isPresent() && optionalByDepartmentId.isPresent()) {
             Employee employee = optionalById.get();
 
             employee.setFirstName(firstName.equals("") ? employee.getFirstName() : firstName);
             employee.setLastName(lastName.equals("") ? employee.getLastName() : lastName);
-            employee.setBirthday(birthday.equals("") ? employee.getBirthday() : birthday);//nullpointer
+            employee.setBirthday(birthday == null ? employee.getBirthday() : birthday);
             employee.setEmail(email);
             employee.setJob(position.equals("") ? employee.getJob() : position);
-            employee.setSalary(salary);//nullpointer
-            //employee.setDepartment(departmentId.equals("") ? optionalById.get().getFirstName() : firstName);
-            //department.setId(newId == -1 ? id : newId);
-            //department.setOriginalName(name.equals("") ? department.getOriginalName() : name);
+            employee.setDepartment(optionalByDepartmentId.get());
+            employee.setSalary(salary == null ? employee.getSalary() : salary);
+
             employeeService.edit(employee);
         } else {
             modelAndView.addObject("errorMessage",
-                    "A department with such name or id already exists");
+                    "An employee with such email already exists, or such id or/and departmentId doesn't exist");
         }
         return returnAddEditEmployeePage(modelAndView);
     }
