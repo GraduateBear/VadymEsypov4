@@ -1,23 +1,25 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/example  
-    username: root
-    password: root
+    username: admin
+    password:
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
-  mvc:
-    view:
-      prefix: /WEB-INF/jsp/
-      suffix: .jsp
-
+  #mvc:
+  #  view:
+  #    prefix: /WEB-INF/jsp/
+  #    suffix: .jsp
 server:
   port: 9090
-  servlet:
-    context-parameters:
-      javax.servlet.jsp.jstl.fmt.localizationContext: resources
-      javax.servlet.jsp.jstl.fmt.locale: ru
-
+  #servlet:
+  #  context-parameters:
+  #    javax.servlet.jsp.jstl.fmt.localizationContext: resources
+  #    javax.servlet.jsp.jstl.fmt.locale: ru
+  #error:
+  #  whitelabel:
+  #    enabled: false
+  #  path: /WEB-INF/jsp/error_page.jsp
 
 

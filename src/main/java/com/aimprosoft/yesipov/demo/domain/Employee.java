@@ -26,9 +26,8 @@ public class Employee {
     private String email;
     private double salary;
 
-    @ManyToOne//(cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, targetEntity = Department.class)
     @JoinColumn(referencedColumnName = "department_id")
-    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Department department;
 
     private Date birthday;

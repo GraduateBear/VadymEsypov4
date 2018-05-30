@@ -7,10 +7,7 @@ import com.aimprosoft.yesipov.demo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Date;
@@ -36,6 +33,7 @@ public class EmployeeController {
             modelAndView.addObject("employeeList", employeeService.getFilteredList(id));
             modelAndView.setViewName("employees");
         } else {
+            modelAndView.addObject("ID", id);
             modelAndView.addObject("errorMessage", "A department with such id doesn't exist");
             modelAndView.addObject("departmentList", departmentService.findAll());
             modelAndView.setViewName("departments");
@@ -48,13 +46,6 @@ public class EmployeeController {
     public ModelAndView findAll(ModelAndView modelAndView) {
         modelAndView.addObject("employeeList", employeeService.findAll());
         modelAndView.setViewName("all_employees");
-        return modelAndView;
-    }
-
-    @GetMapping("/addEdit")
-    public ModelAndView returnAddEditEmployeePage(ModelAndView modelAndView) {
-        modelAndView.addObject("departmentList", departmentService.findAll());
-        modelAndView.setViewName("add_edit_employee");
         return modelAndView;
     }
 
@@ -74,22 +65,59 @@ public class EmployeeController {
         return getFilteredList(modelAndView, id);
     }
 
+    @GetMapping("/addEmployeePage")
+    public ModelAndView returnAddEmployeePage(ModelAndView modelAndView) {
+        modelAndView.setViewName("add_employee");
+        return modelAndView;
+    }
+
+    @PostMapping("/editEmployeePage")
+    public ModelAndView returnEditEmployeePage(ModelAndView modelAndView,
+                                               @RequestParam(name = "id") long id,
+                                               @RequestParam(name = "firstName") String firstName,
+                                               @RequestParam(name = "lastName") String lastName,
+                                               @RequestParam(name = "birthday") @DateTimeFormat(pattern = "yyyy-MM-dd") Date birthday,
+                                               @RequestParam(name = "email") String email,
+                                               @RequestParam(name = "position") String position,
+                                               @RequestParam(name = "departmentName") String departmentName,
+                                               @RequestParam(name = "salary") double salary) {
+        long departmentId = departmentService.findByName(departmentName).get().getId();
+        modelAndView.addObject("ID", id);
+        remainParams(modelAndView, firstName, lastName,
+                birthday, email, position, departmentId, salary);
+        modelAndView.setViewName("edit_employee");
+        return modelAndView;
+    }
+
+    private void remainParams(ModelAndView modelAndView, String firstName, String lastName, Date birthday,
+                              String email, String position, long departmentId, double salary) {
+        modelAndView.addObject("first_name", firstName);
+        modelAndView.addObject("last_name", lastName);
+        modelAndView.addObject("birth", birthday);
+        modelAndView.addObject("mail", email);
+        modelAndView.addObject("job", position);
+        modelAndView.addObject("department_id", departmentId);
+        modelAndView.addObject("wage", salary);
+    }
+
     @PostMapping("/addEmployee")
     public ModelAndView addEmployee(ModelAndView modelAndView,
-                                      @RequestParam(name = "firstName") String firstName,
-                                      @RequestParam(name = "lastName") String lastName,
-                                      @RequestParam(name = "birthday") @DateTimeFormat(pattern = "yyyy-MM-dd") Date birthday,
-                                      @RequestParam(name = "email") String email,
-                                      @RequestParam(name = "position") String position,
-                                      @RequestParam(name = "departmentId") Long departmentId,
-                                      @RequestParam(name = "salary") Double salary) {
+                                    @RequestParam(name = "firstName") String firstName,
+                                    @RequestParam(name = "lastName") String lastName,
+                                    @RequestParam(name = "birthday") @DateTimeFormat(pattern = "yyyy-MM-dd") Date birthday,
+                                    @RequestParam(name = "email") String email,
+                                    @RequestParam(name = "position") String position,
+                                    @RequestParam(name = "departmentId") Long departmentId,
+                                    @RequestParam(name = "salary") Double salary) {
         Optional<Employee> optionalEmployee = employeeService.findByEmail(email);
         Optional<Department> optionalById = departmentService.findById(departmentId);
+
         if (optionalEmployee.isPresent() || !optionalById.isPresent()) {
             modelAndView.addObject("errorMessage",
                     "An employee with such name already exists or a department with such id doesn't exist");
         } else {
             Employee employee = new Employee();
+
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
             employee.setBirthday(birthday);
@@ -97,14 +125,17 @@ public class EmployeeController {
             employee.setJob(position);
             employee.setDepartment(optionalById.get());
             employee.setSalary(salary);
+
             employeeService.add(employee);
         }
-        return returnAddEditEmployeePage(modelAndView);
+        remainParams(modelAndView, firstName, lastName, birthday, email, position, departmentId, salary);
+        modelAndView.setViewName("add_employee");
+        return modelAndView;
     }
 
     @PostMapping("/editEmployee")
     public ModelAndView editEmployee(ModelAndView modelAndView,
-                                     @RequestParam(name = "id") Long id,
+                                     @RequestParam(name = "id") long id,
                                      @RequestParam(name = "firstName") String firstName,
                                      @RequestParam(name = "lastName") String lastName,
                                      @RequestParam(name = "birthday") @DateTimeFormat(pattern = "yyyy-MM-dd") Date birthday,
@@ -114,19 +145,18 @@ public class EmployeeController {
                                      @RequestParam(name = "salary") Double salary) {
         Optional<Employee> optionalById = employeeService.findById(id);
         Optional<Employee> optionalByEmail = employeeService.findByEmail(email);
-        System.out.println(departmentId);
         Optional<Department> optionalByDepartmentId =
                 departmentService.findById(departmentId == null ? 0 : departmentId);
-        System.out.println(optionalByDepartmentId);
-        System.out.println(optionalByDepartmentId.isPresent());
 
-        if(optionalById.isPresent() && !optionalByEmail.isPresent() && optionalByDepartmentId.isPresent()) {
+        if (optionalById.isPresent()
+                && (departmentId.equals(optionalById.get().getDepartment().getId()) || optionalByDepartmentId.isPresent())
+                && (optionalById.get().getEmail().equals(email) || !optionalByEmail.isPresent())) {
             Employee employee = optionalById.get();
 
             employee.setFirstName(firstName.equals("") ? employee.getFirstName() : firstName);
             employee.setLastName(lastName.equals("") ? employee.getLastName() : lastName);
             employee.setBirthday(birthday == null ? employee.getBirthday() : birthday);
-            employee.setEmail(email);
+            employee.setEmail(email.equals("") ? employee.getEmail() : email);
             employee.setJob(position.equals("") ? employee.getJob() : position);
             employee.setDepartment(optionalByDepartmentId.get());
             employee.setSalary(salary == null ? employee.getSalary() : salary);
@@ -136,6 +166,11 @@ public class EmployeeController {
             modelAndView.addObject("errorMessage",
                     "An employee with such email already exists, or such id or/and departmentId doesn't exist");
         }
-        return returnAddEditEmployeePage(modelAndView);
+
+        modelAndView.addObject("ID", id);
+        remainParams(modelAndView, firstName, lastName, birthday, email, position, departmentId, salary);
+
+        modelAndView.setViewName("edit_employee");
+        return modelAndView;
     }
 }

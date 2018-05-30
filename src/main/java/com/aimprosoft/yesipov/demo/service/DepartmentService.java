@@ -17,5 +17,5 @@ public interface DepartmentService {
 
     void add(Department department);
 
-    void edit(Department department, long id);
+    void edit(Department department);
 }
