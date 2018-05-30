@@ -13,9 +13,8 @@
     <tr>
 
         <td class="content center">
-            <form class="login_form" action="/employees/addEditEmployee" method="post" onclick="validateBirthday()">
+            <form class="login_form" action="/employees/editEmployee" method="post" onclick="validateBirthday()">
                 <fieldset>
-                    <legend><c:out value="${mode}"/> an emplyoyee</legend>
                     <input type="text" value="${first_name}" pattern="^[A-ZА-Я][a-zа-яё]+" name="firstName" placeholder="<fmt:message key="index.jsp.placeholder.firstName"/>"/></p>
                     <input type="text" value="${last_name}" pattern="^[A-ZА-Я][a-zа-яё]+" name="lastName" placeholder="<fmt:message key="index.jsp.placeholder.lastName"/>"/></p>
                     <input type="date" value="${birth}" name="birthday"/></p>
@@ -23,9 +22,8 @@
                     <input type="text" value="${job}" pattern="^[A-ZА-Я][a-zа-яё\s]+" name="position" placeholder="<fmt:message key="index.jsp.placeholder.position"/>"/></p>
                     <input type="number" value="${department_id}" min="1" name="departmentId" placeholder="<fmt:message key="index.jsp.placeholder.newDepartmentID"/>"/></p>
                     <input type="number" value="${wage}" min="100" step="10" max="5000" name="salary" placeholder="<fmt:message key="index.jsp.placeholder.salary"/>"/></p>
-                    <input type="hidden" name="id" value="<c:out value="ID"/>">
-                    <input type="hidden" name="mode" value=""/>
-                    <input type="submit" name="editEmployee" value="<fmt:message key="index.jsp.submit.edit"/>" />
+                    <input type="hidden" name="id" value="<c:out value="${ID}"/>">
+                    <input type="submit" value="<fmt:message key="index.jsp.submit.edit"/>" />
                 </fieldset>
             </form>
         </td>

@@ -33,6 +33,7 @@ public class DepartmentController {
     @PostMapping("/remove")
     public ModelAndView removeDepartment(ModelAndView modelAndView,
                                          @RequestParam(name = "id") long id) {
+        modelAndView.addObject("remove_ID", id);
         Optional<Department> department = departmentService.findById(id);
         if (department.isPresent()) {
             departmentService.remove(department.get().getId());
@@ -47,6 +48,7 @@ public class DepartmentController {
     @PostMapping("/addDepartment")
     public ModelAndView addDepartment(ModelAndView modelAndView,
                                       @RequestParam(name = "departmentName") String name) {
+        modelAndView.addObject("add_name", name);
         Optional<Department> optionalDepartment = departmentService.findByName(name);
         if (optionalDepartment.isPresent()) {
             modelAndView.addObject("errorMessage",
@@ -62,24 +64,20 @@ public class DepartmentController {
     @PostMapping("/editDepartment")
     public ModelAndView editDepartment(ModelAndView modelAndView,
                                        @RequestParam(name = "id") long id,
-        //                               @RequestParam(name = "newId") String newID,
                                        @RequestParam(name = "departmentName") String name) {
-        //long newId = newID.equals("") ? -1 : Long.valueOf(newID);
+        modelAndView.addObject("edit_ID", id);
+        modelAndView.addObject("edit_name", name);
 
         Optional<Department> optionalById = departmentService.findById(id);
-        //Optional<Department> optionalByNewId = departmentService.findById(newId);
         Optional<Department> optionalByName = departmentService.findByName(name);
 
-        if(optionalById.isPresent() //|| !optionalByNewId.isPresent() ||
-                && !optionalByName.isPresent()) {
+        if(optionalById.isPresent() && !optionalByName.isPresent()) {
             Department department = optionalById.get();
             department.setOriginalName(name);
-            //department.setId(newId == -1 ? id : newId);
-            //department.setOriginalName(name.equals("") ? department.getOriginalName() : name);
-            departmentService.edit(department, id);
+            departmentService.edit(department);
         } else {
             modelAndView.addObject("errorMessage",
-                    "A department with such name or id already exists");
+                    "A department with such name already exists or id is incorrect");
         }
         return returnAddEditDepartmentPage(modelAndView);
     }
