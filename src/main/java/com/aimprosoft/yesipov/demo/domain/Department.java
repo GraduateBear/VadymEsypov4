@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sf.oval.constraint.Length;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -19,6 +20,7 @@ public class Department {
     @GeneratedValue
     @Column(name = "department_id")
     private long id;
+    @Length(min = 5, message = "validation.originalName")
     private String originalName;
 
     @OneToMany(mappedBy = "department", orphanRemoval = true)

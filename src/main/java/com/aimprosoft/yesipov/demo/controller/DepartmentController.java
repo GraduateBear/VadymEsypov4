@@ -2,12 +2,11 @@ package com.aimprosoft.yesipov.demo.controller;
 
 import com.aimprosoft.yesipov.demo.domain.Department;
 import com.aimprosoft.yesipov.demo.service.DepartmentService;
+import net.sf.oval.integration.spring.SpringValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
@@ -18,9 +17,12 @@ public class DepartmentController {
 
     private DepartmentService departmentService;
 
+    private SpringValidator validator;
+
     @Autowired
-    public DepartmentController(DepartmentService departmentService) {
+    public DepartmentController(DepartmentService departmentService, SpringValidator validator) {
         this.departmentService = departmentService;
+        this.validator = validator;
     }
 
     @GetMapping
@@ -45,7 +47,7 @@ public class DepartmentController {
         return getDepartmentsPage(modelAndView);
     }
 
-    @PostMapping("/addDepartment")
+    /*@PostMapping("/addDepartment")
     public ModelAndView addDepartment(ModelAndView modelAndView,
                                       @RequestParam(name = "departmentName") String name) {
         modelAndView.addObject("add_name", name);
@@ -59,7 +61,37 @@ public class DepartmentController {
             departmentService.add(department);
         }
         return returnAddEditDepartmentPage(modelAndView);
+    }*/
+
+    @ModelAttribute("department")
+    public Department formBackingObject() {
+        return new Department();
     }
+
+    @PostMapping("/addDepartment")
+    public ModelAndView addDepartment(@ModelAttribute(name = "department") Department department,
+                                BindingResult result, ModelAndView modelAndView) {
+        validator.validate(department, result);
+        if (result.hasErrors()) {
+            System.out.println(result.getFieldError("originalName").getCode());
+            modelAndView.addObject("errorMessage", result);
+            modelAndView.setViewName("add_edit_department");
+            return modelAndView;
+        }
+        modelAndView.setViewName("add_edit_department");
+        return modelAndView;
+    }
+
+    /*@PostMapping("/addDepartment")
+    public String addDepartment(@ModelAttribute("department") Department department,
+                                BindingResult result, Model model) {
+        validator.validate(department, result);
+        if (result.hasErrors()) {
+            return "error";
+        }
+
+        return "add_edit_department";
+    }*/
 
     @PostMapping("/editDepartment")
     public ModelAndView editDepartment(ModelAndView modelAndView,
