@@ -1,5 +1,3 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ include file="../jspf/directive/page.jspf" %>
 <%@ include file="../jspf/directive/taglib.jspf" %>
 
@@ -17,11 +15,16 @@
         <td>
             <%--@elvariable id="department" type="com.aimprosoft.yesipov.demo.domain.Department"--%>
             <form:form method="POST" action="/departments/addDepartment" modelAttribute="department">
-                <form:input path="originalName"/>
+                <form:input path="originalName" pattern="^[A-ZА-Я][a-zа-яё\s]+"/>
 
-                <input type="submit" value="Submit"/>
-                <c:if test='${errors.getFieldError("originalName") != null}'>
-                    <spring:message code='${errors.getFieldError("originalName").getDefaultMessage()}'/>
+                <input type="submit" value="<fmt:message key="index.jsp.submit.add"/>"/>
+                <c:set var="code" value="${requestScope['javax.servlet.error.status_code']}"/>
+                <c:set var="exception" value="${requestScope['javax.servlet.error.exception']}"/>
+                <c:if test="${not empty errorMessage and empty exception and empty code}">
+                    <h3>Error message: ${errorMessage.getFieldError("originalName").getDefaultMessage()}</h3>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <h3>Error message: ${error}</h3>
                 </c:if>
             </form:form>
         </td>
@@ -39,7 +42,7 @@
                        name="id" placeholder="<fmt:message key="index.jsp.placeholder.chooseId"/>" /></p>
                 <%--<input type="number" value="${new_edit_ID}" min="1" name="newId"
                        placeholder="<fmt:message key="index.jsp.placeholder.newId"/>" /></p>--%>
-                <input type="text" value="${edit_name}" required name="departmentName" pattern="^[A-ZА-Я][a-zа-яё\s]+" placeholder="<fmt:message key="index.jsp.placeholder.departmentName"/>" /></p>
+                <input type="text" value="${edit_name}" required name="departmentName" pattern="^[A-ZА-Я][a-zа-яё\s]+" minlength="3" placeholder="<fmt:message key="index.jsp.placeholder.departmentName"/>" /></p>
                 <input type="submit" value="<fmt:message key="index.jsp.submit.edit"/>"/>
             </form>
         </td>
@@ -52,16 +55,16 @@
 
     </tr>
 
-    <tr>
+    <%--<tr>
         <td class="content bottom" colspan="4">
-            <%-- if get this page using forward --%>
+            &lt;%&ndash; if get this page using forward &ndash;%&gt;
             <c:set var="code" value="${requestScope['javax.servlet.error.status_code']}"/>
             <c:set var="exception" value="${requestScope['javax.servlet.error.exception']}"/>
             <c:if test="${not empty errorMessage and empty exception and empty code}">
                 <h3>Error message: ${errorMessage.getFieldError("originalName").getDefaultMessage()}</h3>
             </c:if>
         </td>
-    </tr>
+    </tr>--%>
 
 </table>
 

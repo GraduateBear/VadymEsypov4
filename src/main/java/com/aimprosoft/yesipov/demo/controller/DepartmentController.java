@@ -47,22 +47,6 @@ public class DepartmentController {
         return getDepartmentsPage(modelAndView);
     }
 
-    /*@PostMapping("/addDepartment")
-    public ModelAndView addDepartment(ModelAndView modelAndView,
-                                      @RequestParam(name = "departmentName") String name) {
-        modelAndView.addObject("add_name", name);
-        Optional<Department> optionalDepartment = departmentService.findByName(name);
-        if (optionalDepartment.isPresent()) {
-            modelAndView.addObject("errorMessage",
-                    "A department with such name already exists");
-        } else {
-            Department department = new Department();
-            department.setOriginalName(name);
-            departmentService.add(department);
-        }
-        return returnAddEditDepartmentPage(modelAndView);
-    }*/
-
     @ModelAttribute("department")
     public Department formBackingObject() {
         return new Department();
@@ -72,26 +56,23 @@ public class DepartmentController {
     public ModelAndView addDepartment(@ModelAttribute(name = "department") Department department,
                                 BindingResult result, ModelAndView modelAndView) {
         validator.validate(department, result);
+        modelAndView.setViewName("add_edit_department");
+
         if (result.hasErrors()) {
-            System.out.println(result.getFieldError("originalName").getCode());
             modelAndView.addObject("errorMessage", result);
-            modelAndView.setViewName("add_edit_department");
             return modelAndView;
         }
-        modelAndView.setViewName("add_edit_department");
-        return modelAndView;
-    }
 
-    /*@PostMapping("/addDepartment")
-    public String addDepartment(@ModelAttribute("department") Department department,
-                                BindingResult result, Model model) {
-        validator.validate(department, result);
-        if (result.hasErrors()) {
-            return "error";
+        modelAndView.addObject("add_name", department.getOriginalName());
+        Optional<Department> optionalDepartment = departmentService.findByName(department.getOriginalName());
+        if (optionalDepartment.isPresent()) {
+            modelAndView.addObject("error", "A department with such name already exists");
+        } else {
+            departmentService.add(department);
         }
 
-        return "add_edit_department";
-    }*/
+        return modelAndView;
+    }
 
     @PostMapping("/editDepartment")
     public ModelAndView editDepartment(ModelAndView modelAndView,

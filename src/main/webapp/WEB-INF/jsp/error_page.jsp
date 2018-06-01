@@ -24,7 +24,7 @@
             <c:set var="message" value="${requestScope['javax.servlet.error.message']}"/>
 
             <%-- this way we get the exception --%>
-            <c:set var="exception" value="${requestScope['javax.servlet.error.exception']}"/>
+            м
 
             <c:if test="${not empty code}">
                 <h3>Error code: ${code}</h3>

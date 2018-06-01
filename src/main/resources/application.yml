@@ -19,7 +19,7 @@ server:
       javax.servlet.jsp.jstl.fmt.locale: ru
       locales: ru en
     path: /
-  error:
-    whitelabel:
-      enabled: false
-    path: /WEB-INF/jsp/error_page.jsp
+  #error:
+  #  whitelabel:
+  #    enabled: false
+  #  path: /WEB-INF/jsp/error_page.jsp

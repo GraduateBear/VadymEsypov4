@@ -4,9 +4,11 @@ import com.aimprosoft.yesipov.demo.domain.Department;
 import com.aimprosoft.yesipov.demo.domain.Employee;
 import com.aimprosoft.yesipov.demo.service.DepartmentService;
 import com.aimprosoft.yesipov.demo.service.EmployeeService;
+import net.sf.oval.integration.spring.SpringValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,10 +22,13 @@ public class EmployeeController {
     private EmployeeService employeeService;
     private DepartmentService departmentService;
 
+    private SpringValidator validator;
+
     @Autowired
-    public EmployeeController(EmployeeService employeeService, DepartmentService departmentService) {
+    public EmployeeController(EmployeeService employeeService, DepartmentService departmentService, SpringValidator validator) {
         this.employeeService = employeeService;
         this.departmentService = departmentService;
+        this.validator = validator;
     }
 
     @PostMapping("/filteredList")
@@ -100,7 +105,12 @@ public class EmployeeController {
         modelAndView.addObject("wage", salary);
     }
 
-    @PostMapping("/addEmployee")
+    @ModelAttribute("employee")
+    public Employee formBackingObject() {
+        return new Employee();
+    }
+
+    /*@PostMapping("/addEmployee")
     public ModelAndView addEmployee(ModelAndView modelAndView,
                                     @RequestParam(name = "firstName") String firstName,
                                     @RequestParam(name = "lastName") String lastName,
@@ -130,6 +140,31 @@ public class EmployeeController {
         }
         remainParams(modelAndView, firstName, lastName, birthday, email, position, departmentId, salary);
         modelAndView.setViewName("add_employee");
+        return modelAndView;
+    }*/
+
+    @PostMapping("/addEmployee")
+    public ModelAndView addEmployee(@ModelAttribute(name = "employee") Employee employee,
+                                    BindingResult result, ModelAndView modelAndView) {
+        modelAndView.setViewName("add_employee");
+
+        validator.validate(employee, result);
+        if (result.hasErrors()) {
+            modelAndView.addObject("errorMessage", result);
+            return modelAndView;
+        }
+
+        Optional<Employee> optionalEmployee = employeeService.findByEmail(employee.getEmail());
+        Optional<Department> optionalById = departmentService.findById(employee.getDepartment().getId());
+
+        if (optionalEmployee.isPresent() || !optionalById.isPresent()) {
+            modelAndView.addObject("error",
+                    "An employee with such email already exists or a department with such id doesn't exist");
+        } else {
+            employee.setDepartment(optionalById.get());
+
+            employeeService.add(employee);
+        }
         return modelAndView;
     }
 
